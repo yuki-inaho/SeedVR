@@ -33,3 +33,48 @@ __pycache__
 requirements-uv-blackwell.lock.txt
 # color_fix.py is third-party (sd-webui-stablesr); fetch manually per docs/ONBOARDING.md
 projects/video_diffusion_sr/color_fix.py
+
+# --- Python ---
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Environments / secrets ---
+venv/
+env/
+.env
+.env.*
+
+# --- uv cache ---
+.uv/
+
+# --- Editors / OS ---
+*.swp
+*~
+Thumbs.db
+desktop.ini
+
+# --- Model weights / artifacts (extra formats; *.pth/*.safetensors above) ---
+*.ckpt
+*.onnx
+*.gguf
+
+# --- Outputs / media / logs ---
+*.log
+*.mov
+*.mkv
+*.avi
+*.webm
+/outputs
+/output
+/raw
+/restored
+/comparison

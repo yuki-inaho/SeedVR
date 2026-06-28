@@ -24,3 +24,12 @@ __pycache__
 /test_videos
 /results
 /ckpts
+
+# cu128 uv environment (local-only artifacts)
+.venv/
+/smoke_in
+/smoke_out
+*.orig
+requirements-uv-blackwell.lock.txt
+# color_fix.py is third-party (sd-webui-stablesr); fetch manually per docs/ONBOARDING.md
+projects/video_diffusion_sr/color_fix.py

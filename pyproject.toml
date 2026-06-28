@@ -1,0 +1,37 @@
+[project]
+name = "seedvr"
+version = "0.0.0"
+description = "SeedVR / SeedVR2 video restoration — cu128 (Blackwell) uv environment"
+requires-python = ">=3.10,<3.11"
+dependencies = [
+    "torch==2.8.0",
+    "torchvision==0.23.0",
+    "einops==0.7.0",
+    "omegaconf==2.3.0",
+    "opencv-python==4.9.0.80",
+    "diffusers==0.29.1",
+    "rotary-embedding-torch==0.5.3",
+    "transformers==4.38.2",
+    "mediapy==1.2.0",
+    "numpy==1.24.4",
+    "av",
+    "huggingface-hub",
+]
+
+# NOTE: flash-attn / apex are intentionally NOT dependencies on this cu128/Blackwell
+# stack. Their prebuilt wheels require glibc>=2.32 / GLIBCXX_3.4.29 (unavailable on the
+# Ubuntu 20.04 host) and can't be source-built (no nvcc). Attention falls back to torch
+# SDPA and normalization to pure-torch RMSNorm/LayerNorm. See docs/ONBOARDING.md.
+
+[tool.uv]
+# This repo is an application, not an installable package (no build backend).
+package = false
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }

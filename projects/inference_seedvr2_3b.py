@@ -254,6 +254,9 @@ def generation_loop(runner, video_path='./test_videos', output_dir='./results', 
                 video = read_image(
                     os.path.join(video_path, video)
                 ).unsqueeze(0) / 255.0
+                # Image inputs must still extend fps_lists, otherwise the final
+                # zip(..., fps_lists) below is empty and nothing gets written.
+                fps_lists.append(out_fps)
                 if sp_size > 1:
                     raise ValueError("Sp size should be set to 1 for image inputs!")
             else:

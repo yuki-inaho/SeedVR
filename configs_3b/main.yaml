@@ -11,19 +11,19 @@ dit:
     vid_in_channels: 33
     vid_out_channels: 16
     vid_dim: 2560
-    vid_out_norm: fusedrms
+    vid_out_norm: rms
     txt_in_dim: 5120
-    txt_in_norm: fusedln
+    txt_in_norm: layer
     txt_dim: ${.vid_dim}
     emb_dim: ${eval:'6 * ${.vid_dim}'}
     heads: 20
     head_dim: 128 # llm-like
     expand_ratio: 4
-    norm: fusedrms
+    norm: rms
     norm_eps: 1.0e-05
     ada: single
     qk_bias: False
-    qk_norm: fusedrms
+    qk_norm: rms
     patch_size: [ 1,2,2 ]
     num_layers: 32 # llm-like
     mm_layers: 10

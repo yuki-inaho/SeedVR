@@ -93,7 +93,9 @@ class VideoDiffusionInfer():
             self.dit = meta_non_persistent_buffer_init_fn(self.dit)
 
         if device in [get_device(), "cuda"]:
-            self.dit.to(get_device())
+            # Cast DiT weights to bf16 on GPU (forward runs under autocast-bf16
+            # anyway) to fit the 3B model on a 32GB card instead of fp32 ~12GB.
+            self.dit.to(get_device(), dtype=torch.bfloat16)
 
         # Print model size.
         num_params = sum(p.numel() for p in self.dit.parameters() if p.requires_grad)

@@ -15,7 +15,39 @@
 import torch
 import torch.nn.functional as F
 
-from flash_attn import flash_attn_varlen_func
+
+def flash_attn_varlen_func(
+    q,
+    k,
+    v,
+    cu_seqlens_q,
+    cu_seqlens_k,
+    max_seqlen_q=None,
+    max_seqlen_k=None,
+    dropout_p=0.0,
+    softmax_scale=None,
+    causal=False,
+    **kwargs,
+):
+    """SDPA-based drop-in replacement for flash_attn_varlen_func.
+
+    Avoids the prebuilt flash-attn wheel (which needs glibc>=2.32) on this
+    glibc-2.31 host. q/k/v are packed [total_tokens, nheads, head_dim] and
+    cu_seqlens_* are int offsets [nseq+1]; runs per-segment torch SDPA, which
+    is Blackwell (sm_120) native on torch 2.8.
+    """
+    cu_q = cu_seqlens_q.tolist()
+    cu_k = cu_seqlens_k.tolist()
+    outputs = []
+    for i in range(len(cu_q) - 1):
+        qi = q[cu_q[i] : cu_q[i + 1]].transpose(0, 1).unsqueeze(0).contiguous()
+        ki = k[cu_k[i] : cu_k[i + 1]].transpose(0, 1).unsqueeze(0).contiguous()
+        vi = v[cu_k[i] : cu_k[i + 1]].transpose(0, 1).unsqueeze(0).contiguous()
+        oi = F.scaled_dot_product_attention(
+            qi, ki, vi, dropout_p=dropout_p, is_causal=causal, scale=softmax_scale
+        )
+        outputs.append(oi.squeeze(0).transpose(0, 1))
+    return torch.cat(outputs, dim=0)
 
 from torch import nn
 
